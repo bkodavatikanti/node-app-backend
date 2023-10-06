@@ -18,7 +18,6 @@ resource "aws_iam_policy" "api_role_task_execution" {
   name  = "${local.tags.Name}-task-execution"
   description = "This policy is going to be attached for the task execution role"
   policy = data.aws_iam_policy_document.rds_secret.json
-  tags = local.tags
 
 }
 
@@ -26,6 +25,14 @@ resource "aws_iam_policy" "api_role_task_execution" {
 resource "aws_iam_role_policy_attachment" "api_role_policy" {
   role       = aws_iam_role.api_role_task_execution.name
   policy_arn = aws_iam_policy.api_role_task_execution.arn
+}
+
+
+#This is taskpolicy and is mandatory
+#This policy will pull the images from ecr
+resource "aws_iam_role_policy_attachment" "ecr_pull" {
+  role       = aws_iam_role.api_role_task_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy" #AmazonECSTaskExecutionRolePolicy arn
 }
 
 
@@ -37,10 +44,4 @@ resource "aws_iam_role" "api_role_task" {
   tags = local.tags
 }
 
-#This is taskpolicy and is mandatory
-#This policy will pull the images from ecr
-resource "aws_iam_role_policy_attachment" "ecr_pull" {
-  role       = aws_iam_role.api_role_task.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy" #AmazonECSTaskExecutionRolePolicy arn
-}
 

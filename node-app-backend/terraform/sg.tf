@@ -21,3 +21,13 @@ resource "aws_security_group_rule" "example" {
   security_group_id = aws_security_group.api_ecs.id # ecs sg id
   source_security_group_id = local.app_alb_security_group_id #this is the loadbalancer sg id which the traffic comes to this sg.
 }
+
+#allowimg traffic from API-ECS SECURITY GRIUP OM 5432
+resource "aws_security_group_rule" "rds_rule" {
+  type              = "ingress"
+  from_port         = 5432
+  to_port           = 5432
+  protocol          = "tcp"
+  security_group_id =  local.rds_security_group_id # rds sg id
+  source_security_group_id = aws_security_group.api_ecs.id #this is the ecs sg id which the traffic comes to this sg.
+}
